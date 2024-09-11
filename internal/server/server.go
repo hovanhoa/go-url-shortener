@@ -24,11 +24,16 @@ func Init() {
 	// Open a connection to the database
 	conn, err := sql.Open("postgres", connStr)
 	if err != nil {
-		log.Fatalf("error on connecting to database, %v", err)
+		log.Fatal(err)
 	}
 
 	// Ensure the connection is closed when the function exits
 	defer conn.Close()
+
+	err = conn.Ping()
+	if err != nil {
+		log.Fatal("error on ping to the database: ", err)
+	}
 
 	s := storage.New(conn)
 	svc := service.New(s)
