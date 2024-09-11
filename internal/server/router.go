@@ -5,7 +5,7 @@ import (
 	"github.com/hovanhoa/go-url-shortener/internal/handler"
 )
 
-func NewRouter() *gin.Engine {
+func NewRouter(h *handler.Handler) *gin.Engine {
 	router := gin.New()
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())

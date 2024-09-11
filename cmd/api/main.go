@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/hovanhoa/go-url-shortener/config"
-	"github.com/hovanhoa/go-url-shortener/server"
+	"github.com/hovanhoa/go-url-shortener/internal/server"
 	"os"
 )
 
