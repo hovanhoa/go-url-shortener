@@ -1,13 +1,18 @@
 package storage
 
-import "database/sql"
+import (
+	"github.com/hovanhoa/go-url-shortener/internal/entities"
+	"gorm.io/gorm"
+)
 
 type Repository struct {
-	DB  *sql.DB
+	DB  *gorm.DB
 	URL URLRepository
 }
 
-func New(db *sql.DB) *Repository {
+func New(db *gorm.DB) *Repository {
+	db.AutoMigrate(&entities.URL{})
+
 	return &Repository{
 		DB:  db,
 		URL: &urlRepository{db},

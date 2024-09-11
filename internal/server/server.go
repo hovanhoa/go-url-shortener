@@ -1,12 +1,13 @@
 package server
 
 import (
-	"database/sql"
 	"fmt"
 	"github.com/hovanhoa/go-url-shortener/config"
 	"github.com/hovanhoa/go-url-shortener/internal/handler"
 	"github.com/hovanhoa/go-url-shortener/internal/service"
 	"github.com/hovanhoa/go-url-shortener/internal/storage"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 	"log"
 
 	_ "github.com/lib/pq" // Import the pq driver
@@ -14,28 +15,23 @@ import (
 
 func Init() {
 	cfg := config.GetConfig()
-	connStr := fmt.Sprintf(
-		"user=%s password=%s dbname=%s sslmode=disable",
+	// Connection string for PostgreSQL
+	dsn := fmt.Sprintf(
+		"host=%v user=%v password=%v dbname=%v port=%v sslmode=disable",
+		cfg.Database.Host,
 		cfg.Database.User,
 		cfg.Database.Password,
 		cfg.Database.Name,
+		cfg.Database.Port,
 	)
 
-	// Open a connection to the database
-	conn, err := sql.Open("postgres", connStr)
+	// Connect to the PostgreSQL database using GORM
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Failed to connect to the database:", err)
 	}
 
-	// Ensure the connection is closed when the function exits
-	defer conn.Close()
-
-	err = conn.Ping()
-	if err != nil {
-		log.Fatal("error on ping to the database: ", err)
-	}
-
-	s := storage.New(conn)
+	s := storage.New(db)
 	svc := service.New(s)
 	h := handler.New(svc)
 
