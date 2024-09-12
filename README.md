@@ -9,6 +9,8 @@ This is a repository for URL shortener apis. It comes with most sensible plugins
 
 ##  How to run
 
+Update the _default.yaml_ file
+
 Download dependencies
 ```shell
 go mod download
@@ -17,6 +19,14 @@ go mod download
 Run server
 ```shell
 make server
+```
+
+or
+
+Run with docker
+```shell
+cd deployments
+POSTGRES_PASSWORD=... REDIS_PASSWORD=... docker-compose up -d
 ```
 
 Open [Makefile](Makefile) for more details.
