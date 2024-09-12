@@ -3,6 +3,7 @@ package handler
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
+	"github.com/hovanhoa/go-url-shortener/config"
 	"github.com/hovanhoa/go-url-shortener/internal/entities"
 	"github.com/hovanhoa/go-url-shortener/internal/service"
 	"github.com/hovanhoa/go-url-shortener/pkg/base62"
@@ -25,6 +26,7 @@ type (
 )
 
 func (urlHandler *urlHandler) AddNewURL(c *gin.Context) {
+	cfg := config.GetConfig()
 	var u *entities.URL
 	if err := c.Bind(&u); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "the format is invalid"})
@@ -46,6 +48,7 @@ func (urlHandler *urlHandler) AddNewURL(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server"})
 		return
 	} else if existURL != nil {
+		existURL.SortURL = cfg.Server.SLAddr + existURL.SortURL
 		c.JSON(http.StatusOK, existURL)
 		return
 	}
@@ -57,11 +60,13 @@ func (urlHandler *urlHandler) AddNewURL(c *gin.Context) {
 		return
 	}
 
+	newURL.SortURL = cfg.Server.SLAddr + newURL.SortURL
 	c.JSON(http.StatusOK, newURL)
 	return
 }
 
 func (urlHandler *urlHandler) GetURL(c *gin.Context) {
+	cfg := config.GetConfig()
 	shortURL := c.Param("url")
 	u, err := urlHandler.URLService.FindOneByShortURL(shortURL)
 	if err != nil {
@@ -74,6 +79,7 @@ func (urlHandler *urlHandler) GetURL(c *gin.Context) {
 		return
 	}
 
+	u.SortURL = cfg.Server.SLAddr + u.SortURL
 	c.JSON(http.StatusOK, u)
 	return
 }
