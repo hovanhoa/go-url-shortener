@@ -7,7 +7,9 @@ import (
 
 type (
 	URLService interface {
-		AddNewURL(url *entities.URL) error
+		AddNewURL(url *entities.URL) (*entities.URL, error)
+		FindOneByLongURL(longURL string) (*entities.URL, error)
+		FindOneByID(id int64) (*entities.URL, error)
 	}
 
 	urlService struct {
@@ -15,10 +17,37 @@ type (
 	}
 )
 
-func (u *urlService) AddNewURL(url *entities.URL) error {
-	if err := u.storage.URL.AddNewURL(url); err != nil {
-		return err
+func (u *urlService) AddNewURL(url *entities.URL) (*entities.URL, error) {
+	res, err := u.storage.URL.AddNewURL(url)
+	if err != nil {
+		return nil, err
 	}
 
-	return nil
+	return res, nil
+}
+
+func (u *urlService) FindOneByLongURL(longURL string) (*entities.URL, error) {
+	url := entities.URL{
+		LongURL: longURL,
+	}
+
+	res, err := u.storage.URL.FindOneURL(&url)
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
+
+func (u *urlService) FindOneByID(id int64) (*entities.URL, error) {
+	url := entities.URL{
+		ID: id,
+	}
+
+	res, err := u.storage.URL.FindOneURL(&url)
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }

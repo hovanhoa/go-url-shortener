@@ -7,7 +7,8 @@ import (
 
 type (
 	URLRepository interface {
-		AddNewURL(url *entities.URL) error
+		AddNewURL(url *entities.URL) (*entities.URL, error)
+		FindOneURL(url *entities.URL) (*entities.URL, error)
 	}
 
 	urlRepository struct {
@@ -15,10 +16,18 @@ type (
 	}
 )
 
-func (u *urlRepository) AddNewURL(url *entities.URL) error {
-	if err := u.DB.Create(url).Error; err != nil {
-		return err
+func (u *urlRepository) AddNewURL(url *entities.URL) (*entities.URL, error) {
+	if err := u.DB.Create(&url).Error; err != nil {
+		return nil, err
 	}
 
-	return nil
+	return url, nil
+}
+
+func (u *urlRepository) FindOneURL(url *entities.URL) (*entities.URL, error) {
+	if err := u.DB.Where(url).First(&url).Error; err != nil {
+		return nil, err
+	}
+
+	return url, nil
 }
