@@ -18,9 +18,10 @@ type SnowFlake struct {
 }
 
 type Server struct {
-	Mode string `yaml:"Mode"`
-	Host string `yaml:"Host"`
-	Port string `yaml:"Port"`
+	Mode   string `yaml:"Mode"`
+	Host   string `yaml:"Host"`
+	Port   string `yaml:"Port"`
+	SLAddr string `yaml:"SLAddr"`
 }
 
 type Database struct {

@@ -11,10 +11,8 @@ func NewRouter(h *handler.Handler) *gin.Engine {
 	router.Use(gin.Recovery())
 
 	router.GET("/health", handler.Health)
-	v1 := router.Group("/api/v1")
-
-	urlGroup := v1.Group("url")
-	urlGroup.POST("", h.URLHandler.AddNewURL)
+	router.POST("/sl", h.URLHandler.AddNewURL)
+	router.GET("/sl/:url", h.URLHandler.GetURL)
 
 	return router
 }
