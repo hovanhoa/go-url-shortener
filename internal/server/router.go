@@ -6,7 +6,6 @@ import (
 	"github.com/hovanhoa/go-url-shortener/internal/handler"
 	"github.com/hovanhoa/go-url-shortener/internal/middleware/ratelimit"
 	"net/http"
-	"time"
 )
 
 func keyFunc(c *gin.Context) string {
@@ -15,7 +14,7 @@ func keyFunc(c *gin.Context) string {
 
 func errorHandler(c *gin.Context, info ratelimit.Info) {
 	c.JSON(http.StatusTooManyRequests, gin.H{
-		"err": "Too many requests. Try again in " + time.Until(info.ResetTime).String(),
+		"err": "Too many requests",
 	})
 }
 

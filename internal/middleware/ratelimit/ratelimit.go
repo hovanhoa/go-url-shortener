@@ -3,6 +3,7 @@ package ratelimit
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"net/http"
 	"time"
 )
 
@@ -34,7 +35,9 @@ func RateLimiter(s Store, options *Options) gin.HandlerFunc {
 		options.ErrorHandler = func(c *gin.Context, info Info) {
 			c.Header("X-Rate-Limit-Limit", fmt.Sprintf("%d", info.Limit))
 			c.Header("X-Rate-Limit-Reset", fmt.Sprintf("%d", info.ResetTime.Unix()))
-			c.String(429, "Too many requests")
+			c.JSON(http.StatusTooManyRequests, gin.H{
+				"err": "Too many requests",
+			})
 		}
 	}
 	if options.BeforeResponse == nil {
