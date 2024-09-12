@@ -13,10 +13,6 @@ type Config struct {
 	SnowFlake SnowFlake `yaml:"SnowFlake"`
 }
 
-type SnowFlake struct {
-	Node int64 `yaml:"Node"`
-}
-
 type Server struct {
 	Mode   string `yaml:"Mode"`
 	Host   string `yaml:"Host"`
@@ -30,6 +26,16 @@ type Database struct {
 	Name     string `yaml:"Name"`
 	User     string `yaml:"User"`
 	Password string `yaml:"Password"`
+}
+
+type SnowFlake struct {
+	Node int64 `yaml:"Node"`
+}
+
+type Redis struct {
+	Addr     string `yaml:"Addr"`
+	Password string `yaml:"Password"`
+	DB       string `yaml:"DB"`
 }
 
 var cfg *Config
