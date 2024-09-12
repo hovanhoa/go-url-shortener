@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/hovanhoa/go-url-shortener/internal/entities"
 	"github.com/hovanhoa/go-url-shortener/internal/service"
+	"github.com/hovanhoa/go-url-shortener/pkg/url"
 	"gorm.io/gorm"
 	"net/http"
 )
@@ -19,19 +20,24 @@ type (
 	}
 )
 
-func (u *urlHandler) AddNewURL(c *gin.Context) {
-	var url *entities.URL
-	if err := c.Bind(&url); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "The format is invalid"})
+func (urlHandler *urlHandler) AddNewURL(c *gin.Context) {
+	var u *entities.URL
+	if err := c.Bind(&u); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "the format is invalid"})
 		return
 	}
 
-	if url.LongURL == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "The URL is missing"})
+	if u.LongURL == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "the long url is missing"})
 		return
 	}
 
-	existURL, err := u.URLService.FindOneByLongURL(url.LongURL)
+	if !url.IsValidURL(u.LongURL) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "the url is invalid format"})
+		return
+	}
+
+	existURL, err := urlHandler.URLService.FindOneByLongURL(u.LongURL)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server"})
 		return
@@ -42,7 +48,7 @@ func (u *urlHandler) AddNewURL(c *gin.Context) {
 		return
 	}
 
-	newURL, err := u.URLService.AddNewURL(url)
+	newURL, err := urlHandler.URLService.AddNewURL(u)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server"})
 		return
