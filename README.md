@@ -6,6 +6,7 @@ This is a repository for URL shortener apis. It comes with most sensible plugins
 - [x] [gin](https://gin-gonic.com)(Framework) for handling requests
 - [x] [postgresql](https://www.postgresql.org/) for relational database
 - [x] gorm ([go-gorm/gorm](https://github.com/go-gorm/gorm)) for ORM library for Golang aims to be developer friendly
+- [x] redis ([redis/go-redis](https://github.com/redis/go-redis)) for caching query
 
 ##  How to run
 
