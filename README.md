@@ -10,7 +10,7 @@ This is a repository for URL shortener apis. It comes with most sensible plugins
 
 ##  How to run
 
-Update the _default.yaml_ file
+Create the _default.yaml_ file by copy _example.yaml_ file in deployments folder
 
 Download dependencies
 ```shell
