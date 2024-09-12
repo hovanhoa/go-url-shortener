@@ -1,0 +1,19 @@
+Server:
+  Name: url-shortener
+  Env: development
+  Host: 127.0.0.1
+  Port: :8080
+  SLAddr: http://0.0.0.0:8080/sl/
+Database:
+  Host: postgres
+  Port: 5432
+  User: postgres
+  Password:
+  Name: url-shortener
+SnowFlake:
+  Node: 1
+Redis:
+  Addr: redis:6379
+  DB: 0
+  Password:
+  ExpirationTime: 3600000000000 # 1 hour
