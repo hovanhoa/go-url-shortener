@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/hovanhoa/go-url-shortener/config"
 	"github.com/hovanhoa/go-url-shortener/internal/handler"
 	"github.com/hovanhoa/go-url-shortener/internal/middleware/ratelimit"
 	"net/http"
@@ -19,13 +20,14 @@ func errorHandler(c *gin.Context, info ratelimit.Info) {
 }
 
 func NewRouter(h *handler.Handler) *gin.Engine {
+	cfg := config.GetConfig()
 	router := gin.New()
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 
 	store := ratelimit.InMemoryStore(&ratelimit.InMemoryOptions{
-		Rate:  time.Minute,
-		Limit: 2,
+		Rate:  cfg.RateLimit.Rate,
+		Limit: cfg.RateLimit.Limit,
 	})
 	rateLimiter := ratelimit.RateLimiter(store, &ratelimit.Options{
 		ErrorHandler: errorHandler,

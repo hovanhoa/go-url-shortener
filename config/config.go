@@ -13,6 +13,7 @@ type Config struct {
 	Database  Database  `yaml:"Database"`
 	SnowFlake SnowFlake `yaml:"SnowFlake"`
 	Redis     Redis     `yaml:"Redis"`
+	RateLimit RateLimit `yaml:"RateLimit"`
 }
 
 type Server struct {
@@ -39,6 +40,11 @@ type Redis struct {
 	Password       string        `yaml:"Password"`
 	DB             int           `yaml:"DB"`
 	ExpirationTime time.Duration `yaml:"ExpirationTime"`
+}
+
+type RateLimit struct {
+	Limit uint          `yaml:"Limit"`
+	Rate  time.Duration `yaml:"Rate"`
 }
 
 var cfg *Config
