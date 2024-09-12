@@ -47,7 +47,7 @@ var cfg *Config
 // (external lib) and returns the configuration struct.
 func Init(env string) {
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath("config/")
+	viper.AddConfigPath("deployments/")
 	viper.SetConfigName(env)
 	err := viper.ReadInConfig()
 	if err != nil {

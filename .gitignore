@@ -25,7 +25,7 @@ go.work.sum
 .env
 
 # yaml file
-config/*.yaml
+deployments/*.yaml
 
 # Goland
 .idea

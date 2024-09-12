@@ -1,6 +1,26 @@
 version: '3.8'
 
 services:
+  backend:
+    build:
+      context: ../
+      dockerfile: deployments/Dockerfile
+    image: sl-server
+    container_name: "sl-server"
+    ports:
+      - "8080:8080"
+    command: "api"
+    restart: always
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./:/go/bin/deployments/
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 300m
+
   postgres:
     image: postgres:15
     container_name: sl-postgres
