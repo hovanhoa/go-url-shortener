@@ -6,6 +6,7 @@ import (
 	"github.com/hovanhoa/go-url-shortener/internal/handler"
 	"github.com/hovanhoa/go-url-shortener/internal/service"
 	"github.com/hovanhoa/go-url-shortener/internal/storage"
+	"github.com/hovanhoa/go-url-shortener/pkg/snowflake"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -31,9 +32,14 @@ func Init() {
 		log.Fatal("Failed to connect to the database:", err)
 	}
 
+	n, err := snowflake.NewNode(cfg.SnowFlake.Node)
+	if err != nil {
+		log.Fatal("Failed to create a snowflake node:", err)
+	}
+	
 	s := storage.New(db)
 	svc := service.New(s)
-	h := handler.New(svc)
+	h := handler.New(svc, n)
 
 	r := NewRouter(h)
 	r.Run(cfg.Server.Port)

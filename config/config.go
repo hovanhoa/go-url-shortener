@@ -8,8 +8,13 @@ import (
 // Config stores all configuration of the application.
 // The values are read by viper from a configs file or environment variables
 type Config struct {
-	Server   Server   `yaml:"Server"`
-	Database Database `yaml:"Database"`
+	Server    Server    `yaml:"Server"`
+	Database  Database  `yaml:"Database"`
+	SnowFlake SnowFlake `yaml:"SnowFlake"`
+}
+
+type SnowFlake struct {
+	Node int64 `yaml:"Node"`
 }
 
 type Server struct {

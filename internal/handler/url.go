@@ -5,6 +5,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/hovanhoa/go-url-shortener/internal/entities"
 	"github.com/hovanhoa/go-url-shortener/internal/service"
+	"github.com/hovanhoa/go-url-shortener/pkg/base62"
+	"github.com/hovanhoa/go-url-shortener/pkg/snowflake"
 	"github.com/hovanhoa/go-url-shortener/pkg/url"
 	"gorm.io/gorm"
 	"net/http"
@@ -17,6 +19,7 @@ type (
 
 	urlHandler struct {
 		service.URLService
+		*snowflake.Node
 	}
 )
 
@@ -41,13 +44,12 @@ func (urlHandler *urlHandler) AddNewURL(c *gin.Context) {
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server"})
 		return
-	}
-
-	if existURL != nil {
+	} else if existURL != nil {
 		c.JSON(http.StatusOK, existURL)
 		return
 	}
 
+	u.SortURL = base62.Encode(uint64(urlHandler.Node.Generate().Int64()))
 	newURL, err := urlHandler.URLService.AddNewURL(u)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server"})
@@ -55,4 +57,5 @@ func (urlHandler *urlHandler) AddNewURL(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, newURL)
+	return
 }

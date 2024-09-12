@@ -1,13 +1,16 @@
 package handler
 
-import "github.com/hovanhoa/go-url-shortener/internal/service"
+import (
+	"github.com/hovanhoa/go-url-shortener/internal/service"
+	"github.com/hovanhoa/go-url-shortener/pkg/snowflake"
+)
 
 type Handler struct {
 	URLHandler
 }
 
-func New(s *service.Service) *Handler {
+func New(s *service.Service, n *snowflake.Node) *Handler {
 	return &Handler{
-		URLHandler: &urlHandler{s.URL},
+		URLHandler: &urlHandler{s.URL, n},
 	}
 }
