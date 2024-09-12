@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/spf13/viper"
 	"log"
+	"time"
 )
 
 // Config stores all configuration of the application.
@@ -11,6 +12,7 @@ type Config struct {
 	Server    Server    `yaml:"Server"`
 	Database  Database  `yaml:"Database"`
 	SnowFlake SnowFlake `yaml:"SnowFlake"`
+	Redis     Redis     `yaml:"Redis"`
 }
 
 type Server struct {
@@ -33,9 +35,10 @@ type SnowFlake struct {
 }
 
 type Redis struct {
-	Addr     string `yaml:"Addr"`
-	Password string `yaml:"Password"`
-	DB       string `yaml:"DB"`
+	Addr           string        `yaml:"Addr"`
+	Password       string        `yaml:"Password"`
+	DB             int           `yaml:"DB"`
+	ExpirationTime time.Duration `yaml:"ExpirationTime"`
 }
 
 var cfg *Config

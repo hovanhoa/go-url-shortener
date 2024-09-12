@@ -1,5 +1,5 @@
 server:
-	go run main.go
+	go run cmd/api/main.go
 
 test:
 	go test -v -cover -short ./...
