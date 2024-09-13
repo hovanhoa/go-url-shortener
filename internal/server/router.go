@@ -5,6 +5,7 @@ import (
 	"github.com/hovanhoa/go-url-shortener/config"
 	"github.com/hovanhoa/go-url-shortener/internal/handler"
 	"github.com/hovanhoa/go-url-shortener/internal/middleware/ratelimit"
+	"github.com/hovanhoa/go-url-shortener/internal/middleware/timeout"
 	"net/http"
 )
 
@@ -24,6 +25,7 @@ func NewRouter(h *handler.Handler) *gin.Engine {
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 
+	// middleware for rate limiter
 	store := ratelimit.InMemoryStore(&ratelimit.InMemoryOptions{
 		Rate:  cfg.RateLimit.Rate,
 		Limit: cfg.RateLimit.Limit,
@@ -33,9 +35,13 @@ func NewRouter(h *handler.Handler) *gin.Engine {
 		KeyFunc:      keyFunc,
 	})
 
+	// middleware for timeout request
+	timeoutMiddleware := timeout.TimeOutMiddleware(cfg.TimeOut.Time)
+	router.Use(rateLimiter, timeoutMiddleware)
+
 	router.GET("/health", handler.Health)
-	router.POST("/sl", rateLimiter, h.URLHandler.AddNewURL)
-	router.GET("/sl/:url", rateLimiter, h.URLHandler.GetURL)
+	router.POST("/sl", h.URLHandler.AddNewURL)
+	router.GET("/sl/:url", h.URLHandler.GetURL)
 
 	return router
 }

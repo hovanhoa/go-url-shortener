@@ -14,6 +14,7 @@ type Config struct {
 	SnowFlake SnowFlake `yaml:"SnowFlake"`
 	Redis     Redis     `yaml:"Redis"`
 	RateLimit RateLimit `yaml:"RateLimit"`
+	TimeOut   TimeOut   `yaml:"TimeOut"`
 }
 
 type Server struct {
@@ -45,6 +46,10 @@ type Redis struct {
 type RateLimit struct {
 	Limit uint          `yaml:"Limit"`
 	Rate  time.Duration `yaml:"Rate"`
+}
+
+type TimeOut struct {
+	Time time.Duration `yaml:"Time"`
 }
 
 var cfg *Config
