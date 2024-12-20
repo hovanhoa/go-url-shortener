@@ -8,6 +8,7 @@ This is a repository for URL shortener apis. It comes with most sensible plugins
 - [x] gorm ([go-gorm/gorm](https://github.com/go-gorm/gorm)) for ORM library for Golang aims to be developer friendly
 - [x] redis ([redis/go-redis](https://github.com/redis/go-redis)) for caching query
 - [x] rate limiter ([internal\middleware\ratelimit](https://github.com/hovanhoa/go-url-shortener/tree/main/internal/middleware/ratelimit)) middleware for prevent too many requests
+- [x] [air](https://github.com/air-verse/air) for live reload
 
 ##  How to run
 
@@ -21,6 +22,11 @@ go mod download
 Run server
 ```shell
 make server
+```
+
+Run server with live reload
+```shell
+make air
 ```
 
 or
