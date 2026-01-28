@@ -2,6 +2,8 @@ package handler
 
 import (
 	"errors"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/hovanhoa/go-url-shortener/config"
 	"github.com/hovanhoa/go-url-shortener/internal/entities"
@@ -10,7 +12,6 @@ import (
 	"github.com/hovanhoa/go-url-shortener/pkg/snowflake"
 	"github.com/hovanhoa/go-url-shortener/pkg/url"
 	"gorm.io/gorm"
-	"net/http"
 )
 
 type (

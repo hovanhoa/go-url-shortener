@@ -35,3 +35,17 @@ deployments/default.yaml
 
 # Air
 bin
+
+# Docker
+*.log
+
+# Monitoring stack data (local volumes if any)
+prometheus_data/
+grafana_data/
+loki_data/
+postgres_data/
+redis_data/
+
+# Temporary files
+tmp/
+temp/

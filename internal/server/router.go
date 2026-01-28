@@ -1,12 +1,14 @@
 package server
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/hovanhoa/go-url-shortener/config"
 	"github.com/hovanhoa/go-url-shortener/internal/handler"
 	"github.com/hovanhoa/go-url-shortener/internal/middleware/ratelimit"
 	"github.com/hovanhoa/go-url-shortener/internal/middleware/timeout"
-	"net/http"
+	"github.com/hovanhoa/go-url-shortener/pkg/apm"
 )
 
 func keyFunc(c *gin.Context) string {
@@ -24,6 +26,11 @@ func NewRouter(h *handler.Handler) *gin.Engine {
 	router := gin.New()
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
+
+	// Prometheus APM
+	prom := apm.NewPrometheus("go-url-shortener")
+	router.Use(prom.GinMiddleware())
+	router.GET("/metrics", gin.WrapH(prom.Handler()))
 
 	// middleware for rate limiter
 	store := ratelimit.InMemoryStore(&ratelimit.InMemoryOptions{
