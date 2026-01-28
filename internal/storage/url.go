@@ -1,14 +1,17 @@
 package storage
 
 import (
+	"context"
+
 	"github.com/hovanhoa/go-url-shortener/internal/entities"
+	"github.com/hovanhoa/go-url-shortener/pkg/otel"
 	"gorm.io/gorm"
 )
 
 type (
 	URLRepository interface {
-		AddNewURL(url *entities.URL) (*entities.URL, error)
-		FindOneURL(url *entities.URL) (*entities.URL, error)
+		AddNewURL(ctx context.Context, url *entities.URL) (*entities.URL, error)
+		FindOneURL(ctx context.Context, url *entities.URL) (*entities.URL, error)
 	}
 
 	urlRepository struct {
@@ -16,18 +19,26 @@ type (
 	}
 )
 
-func (u *urlRepository) AddNewURL(url *entities.URL) (*entities.URL, error) {
-	if err := u.DB.Create(&url).Error; err != nil {
-		return nil, err
-	}
-
-	return url, nil
+func (u *urlRepository) AddNewURL(ctx context.Context, url *entities.URL) (*entities.URL, error) {
+	var result *entities.URL
+	err := otel.GormWithTracing(ctx, u.DB, "create", func(db *gorm.DB) error {
+		if err := db.Create(&url).Error; err != nil {
+			return err
+		}
+		result = url
+		return nil
+	})
+	return result, err
 }
 
-func (u *urlRepository) FindOneURL(url *entities.URL) (*entities.URL, error) {
-	if err := u.DB.Where(url).First(&url).Error; err != nil {
-		return nil, err
-	}
-
-	return url, nil
+func (u *urlRepository) FindOneURL(ctx context.Context, url *entities.URL) (*entities.URL, error) {
+	var result *entities.URL
+	err := otel.GormWithTracing(ctx, u.DB, "find", func(db *gorm.DB) error {
+		if err := db.Where(url).First(&url).Error; err != nil {
+			return err
+		}
+		result = url
+		return nil
+	})
+	return result, err
 }

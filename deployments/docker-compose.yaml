@@ -15,12 +15,28 @@ services:
       - postgres
       - redis
       - prometheus
+      - otel-collector
     volumes:
       - ./:/go/bin/deployments/
     logging:
       driver: "json-file"
       options:
         max-size: 300m
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: sl-otel-collector
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml:ro
+    ports:
+      - "4317:4317"   # OTLP gRPC receiver
+      - "4318:4318"   # OTLP HTTP receiver
+      - "8888:8888"   # Prometheus metrics endpoint
+    depends_on:
+      - prometheus
+      - jaeger
+    restart: always
 
   prometheus:
     image: prom/prometheus:v2.51.2
@@ -33,6 +49,15 @@ services:
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
+    restart: always
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: sl-jaeger
+    ports:
+      - "16686:16686"  # Jaeger UI
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
     restart: always
 
   grafana:
@@ -51,6 +76,7 @@ services:
     depends_on:
       - prometheus
       - loki
+      - jaeger
     restart: always
 
   loki:
@@ -94,7 +120,12 @@ services:
     container_name: sl-redis
     ports:
       - "6379:6379"
-    command: /bin/sh -c "redis-server --requirepass ${REDIS_PASSWORD}"
+    command: >
+      sh -c "if [ -n \"$$REDIS_PASSWORD\" ]; then
+        redis-server --requirepass \"$$REDIS_PASSWORD\"
+      else
+        redis-server
+      fi"
     volumes:
       - redis_data:/data
     restart: always

@@ -1,9 +1,11 @@
 package config
 
 import (
-	"github.com/spf13/viper"
-	"log"
+	"log/slog"
+
 	"time"
+
+	"github.com/spf13/viper"
 )
 
 // Config stores all configuration of the application.
@@ -62,14 +64,16 @@ func Init(env string) {
 	viper.SetConfigName(env)
 	err := viper.ReadInConfig()
 	if err != nil {
-		log.Fatalf("error on parsing env configuration file, %v", err)
-
+		slog.Error("Failed to parse configuration file", "error", err)
+		panic(err)
 	}
 
 	err = viper.Unmarshal(&cfg)
 	if err != nil {
-		log.Fatalf("error on decoding into struct, %v", err)
+		slog.Error("Failed to decode configuration into struct", "error", err)
+		panic(err)
 	}
+	slog.Info("Configuration loaded successfully", "config_file", viper.ConfigFileUsed())
 }
 
 // GetConfig return the config struct

@@ -44,7 +44,7 @@ func (urlHandler *urlHandler) AddNewURL(c *gin.Context) {
 		return
 	}
 
-	existURL, err := urlHandler.URLService.FindOneByLongURL(u.LongURL)
+	existURL, err := urlHandler.URLService.FindOneByLongURL(c.Request.Context(), u.LongURL)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server"})
 		return
@@ -55,7 +55,7 @@ func (urlHandler *urlHandler) AddNewURL(c *gin.Context) {
 	}
 
 	u.SortURL = base62.Encode(uint64(urlHandler.Node.Generate().Int64()))
-	newURL, err := urlHandler.URLService.AddNewURL(u)
+	newURL, err := urlHandler.URLService.AddNewURL(c.Request.Context(), u)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server"})
 		return
@@ -69,7 +69,7 @@ func (urlHandler *urlHandler) AddNewURL(c *gin.Context) {
 func (urlHandler *urlHandler) GetURL(c *gin.Context) {
 	cfg := config.GetConfig()
 	shortURL := c.Param("url")
-	u, err := urlHandler.URLService.FindOneByShortURL(shortURL)
+	u, err := urlHandler.URLService.FindOneByShortURL(c.Request.Context(), shortURL)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "the url is not found"})

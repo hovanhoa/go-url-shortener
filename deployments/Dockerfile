@@ -1,4 +1,4 @@
-FROM golang:1.23.1-alpine as builder
+FROM golang:1.24-alpine as builder
 RUN apk update && apk add build-base cmake gcc git
 WORKDIR /go/src/github.com/hovanhoa/go-url-shortener
 ADD .. .

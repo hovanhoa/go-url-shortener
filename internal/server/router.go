@@ -9,6 +9,8 @@ import (
 	"github.com/hovanhoa/go-url-shortener/internal/middleware/ratelimit"
 	"github.com/hovanhoa/go-url-shortener/internal/middleware/timeout"
 	"github.com/hovanhoa/go-url-shortener/pkg/apm"
+	"github.com/hovanhoa/go-url-shortener/pkg/logger"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 )
 
 func keyFunc(c *gin.Context) string {
@@ -24,8 +26,12 @@ func errorHandler(c *gin.Context, info ratelimit.Info) {
 func NewRouter(h *handler.Handler) *gin.Engine {
 	cfg := config.GetConfig()
 	router := gin.New()
-	router.Use(gin.Logger())
+	// Use JSON structured logging instead of default text logger
+	router.Use(logger.GinJSONLogger())
 	router.Use(gin.Recovery())
+
+	// OpenTelemetry middleware (should be early in the chain)
+	router.Use(otelgin.Middleware("go-url-shortener"))
 
 	// Prometheus APM
 	prom := apm.NewPrometheus("go-url-shortener")

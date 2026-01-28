@@ -1,7 +1,7 @@
 package base62
 
 import (
-	"log"
+	"log/slog"
 )
 
 // Base62 represents the base62 const.
@@ -41,7 +41,8 @@ type Factory struct {
 // New returns a new Factory with the given variant of characters.
 func New(chars [Base62]rune) *Factory {
 	if uint64(len(chars)) != Base62 {
-		log.Fatal("length must be equal to 62")
+		slog.Error("Invalid character array length", "expected", Base62, "got", len(chars))
+		panic("length must be equal to 62")
 	}
 	lookup := make(map[rune]int, Base62)
 	for i, c := range chars {
