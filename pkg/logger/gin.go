@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -48,6 +49,10 @@ func GinJSONLogger() gin.HandlerFunc {
 
 		if len(c.Errors) > 0 {
 			attrs = append(attrs, "errors", c.Errors.String())
+			// Add individual error details
+			for i, err := range c.Errors {
+				attrs = append(attrs, fmt.Sprintf("error_%d", i), err.Error())
+			}
 		}
 
 		// Log based on status code

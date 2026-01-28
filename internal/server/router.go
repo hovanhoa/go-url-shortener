@@ -10,6 +10,7 @@ import (
 	"github.com/hovanhoa/go-url-shortener/internal/middleware/timeout"
 	"github.com/hovanhoa/go-url-shortener/pkg/apm"
 	"github.com/hovanhoa/go-url-shortener/pkg/logger"
+	"github.com/hovanhoa/go-url-shortener/pkg/middleware"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 )
 
@@ -28,10 +29,12 @@ func NewRouter(h *handler.Handler) *gin.Engine {
 	router := gin.New()
 	// Use JSON structured logging instead of default text logger
 	router.Use(logger.GinJSONLogger())
-	router.Use(gin.Recovery())
 
-	// OpenTelemetry middleware (should be early in the chain)
+	// OpenTelemetry middleware (should be early in the chain, before recovery)
 	router.Use(otelgin.Middleware("go-url-shortener"))
+
+	// Custom recovery that captures panics in OpenTelemetry traces
+	router.Use(middleware.RecoveryWithOTel())
 
 	// Prometheus APM
 	prom := apm.NewPrometheus("go-url-shortener")
@@ -55,6 +58,7 @@ func NewRouter(h *handler.Handler) *gin.Engine {
 	router.GET("/health", handler.Health)
 	router.POST("/sl", h.URLHandler.AddNewURL)
 	router.GET("/sl/:url", h.URLHandler.GetURL)
+	router.GET("/panic", handler.PanicHandler) // Test endpoint for invalid memory access
 
 	return router
 }
