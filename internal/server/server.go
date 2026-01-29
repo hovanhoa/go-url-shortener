@@ -23,8 +23,13 @@ import (
 func Init() {
 	cfg := config.GetConfig()
 
-	// Initialize structured JSON logger
-	logger.Init("go-url-shortener")
+	// Initialize structured JSON logger with Graylog support
+	logger.InitWithGraylog(
+		"go-url-shortener",
+		cfg.Graylog.Address,
+		cfg.Graylog.Port,
+		cfg.Graylog.Enabled,
+	)
 	slog.Info("Starting application", "port", cfg.Server.Port)
 
 	// Initialize OpenTelemetry

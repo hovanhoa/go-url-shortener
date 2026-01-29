@@ -22,3 +22,7 @@ RateLimit:
   Rate: 1000000000 # 1 second
 Timeout:
   Time: 10000000000 # 10 seconds
+Graylog:
+  Enabled: false
+  Address: 0.0.0.0
+  Port: 12201

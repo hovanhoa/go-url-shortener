@@ -1,27 +1,27 @@
 version: '3.8'
 
 services:
-  backend:
-    build:
-      context: ../
-      dockerfile: deployments/Dockerfile
-    image: sl-server
-    container_name: "sl-server"
-    ports:
-      - "8080:8080"
-    command: "api"
-    restart: always
-    depends_on:
-      - postgres
-      - redis
-      - prometheus
-      - otel-collector
-    volumes:
-      - ./:/go/bin/deployments/
-    logging:
-      driver: "json-file"
-      options:
-        max-size: 300m
+  # backend:
+  #   build:
+  #     context: ../
+  #     dockerfile: deployments/Dockerfile
+  #   image: sl-server
+  #   container_name: "sl-server"
+  #   ports:
+  #     - "8080:8080"
+  #   command: "api"
+  #   restart: always
+  #   depends_on:
+  #     - postgres
+  #     - redis
+  #     - prometheus
+  #     - otel-collector
+  #   volumes:
+  #     - ./:/go/bin/deployments/
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: 300m
 
   otel-collector:
     image: otel/opentelemetry-collector-contrib:latest

@@ -17,6 +17,7 @@ type Config struct {
 	Redis     Redis     `yaml:"Redis"`
 	RateLimit RateLimit `yaml:"RateLimit"`
 	TimeOut   TimeOut   `yaml:"TimeOut"`
+	Graylog   Graylog   `yaml:"Graylog"`
 }
 
 type Server struct {
@@ -52,6 +53,12 @@ type RateLimit struct {
 
 type TimeOut struct {
 	Time time.Duration `yaml:"Time"`
+}
+
+type Graylog struct {
+	Enabled bool   `yaml:"Enabled"`
+	Address string `yaml:"Address"`
+	Port    int    `yaml:"Port"`
 }
 
 var cfg *Config
